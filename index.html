@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>audio player</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<div id="audio-player-container">
+  <audio src="tears don't fall.mp3" preload="metadata" loop></audio>
+  <p>tears don't fall</p>
+  <button id="play-icon"></button>
+  <span id="current-time" class="time">0:00</span>
+  <input type="range" id="seek-slider" max="100" value="0">
+  <span id="duration" class="time">0:00</span>
+  <output id="volume-output">100</output>
+  <input type="range" id="volume-slider" max="100" value="100">
+  <button id="mute-icon"></button>
+</div>
+<!-- partial -->
+  <script type="module" src="./script.js"></script>
+
+</body>
+</html>
