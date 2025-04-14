@@ -1,4 +1,3 @@
-
 html {
   height: 100%;
   width: 100%;
@@ -16,25 +15,23 @@ body {
   align-items: center;
   flex-direction: column;
   background: #000;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 body h1 {
   font-size: 36px;
-  margin-bottom: 0;
-  margin: 0;
+  margin: 0 0 20px; /* Added spacing below h1 */
 }
 
 body .card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* Start content from top */
   align-items: center;
-  flex: 1;
+  width: 90%;
   max-width: 500px;
-  width: 100%;
-  height: 100%;
-  padding: 0 5px;
-  margin-top: 40px;
+  min-height: 80vh;
+  padding: 20px 5px; /* Added padding for better spacing */
   border-radius: 20px;
   color: #fff;
   font-weight: 100;
@@ -48,7 +45,7 @@ body .card .current-song {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 20px 0px;
+  padding: 20px 0;
   border-radius: 20px;
   color: #071739;
   background: #fff;
@@ -60,39 +57,43 @@ body .card .current-song audio {
 
 body .card .current-song .img-wrap {
   position: relative;
-  margin: 0 auto;
-  width: 270px;
-  height: 200px;
+  margin: 0 auto 20px; /* Added margin below image */
+  width: 100%;
+  max-width: 270px;
+  height: auto;
   overflow: hidden;
   border-radius: 20px;
   box-shadow: 0px 10px 40px 0px rgba(39, 70, 132, 0.7);
 }
 
 body .card .current-song .img-wrap img {
-  width: auto;
-  height: 100%;
+  width: 100%;
+  height: auto;
 }
 
 body .card .current-song .song-name {
-  margin-top: 30px;
+  margin: 10px 0;
   font-size: 22px;
 }
 
 body .card .current-song .song-autor {
   color: #709fdc;
+  margin: 5px 0;
 }
 
 body .card .current-song .time {
   display: flex;
   justify-content: space-between;
-  margin-top: 10px;
-  width: 240px;
+  margin: 10px 0;
+  width: 80%;
+  max-width: 240px;
 }
 
 body .card .current-song #timeline {
   position: relative;
-  margin: 0 auto;
-  width: 240px;
+  margin: 10px auto;
+  width: 80%;
+  max-width: 240px;
   height: 5px;
   background: #709fdc;
   border-radius: 5px;
@@ -157,19 +158,19 @@ body .card .current-song #timeline .hover-playhead::after {
 }
 
 body .card .current-song .controls {
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 body .card .current-song .controls button {
   color: #071739;
   border-radius: 50%;
-  margin: 15px;
+  margin: 0 10px;
   font-size: 18px;
   text-align: center;
   transition: 0.2s;
   cursor: pointer;
   border: none;
-  background: 0;
+  background: transparent;
 }
 
 body .card .current-song .controls button:focus {
@@ -183,7 +184,6 @@ body .card .current-song .controls button.play {
 }
 
 body .card .current-song .controls button.play:hover {
-  left: 0;
   box-shadow: 0px 0px 15px 0px rgba(39, 70, 132, 0.7);
 }
 
@@ -204,8 +204,27 @@ body .card .play-list {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  height: 180px;
-  overflow-y: scroll;
+  width: 100%;
+  max-height: 30vh;
+  overflow-y: auto;
 }
 
-/* remaining styles kept as-is */
+@media (max-width: 480px) {
+  body .card {
+    margin-top: 10px;
+    padding: 10px 5px;
+  }
+  body .card .current-song .song-name {
+    font-size: 18px;
+  }
+  body .card .current-song .img-wrap {
+    max-width: 200px;
+  }
+  body .card .current-song .controls button {
+    margin: 0 5px;
+  }
+}
+
+
+
+
