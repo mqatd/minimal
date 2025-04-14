@@ -19,10 +19,10 @@ button {
     --volume-before-width: 100%;
     --buffered-width: 0%;
     position: relative;
-    margin: 100px 2.5% auto 2.5%;
+    
     width: 95%;
     max-width: 500px;
-    height: 132px;
+    height: 200px;
     background: #fff;
 }
 #audio-player-container::before {
@@ -42,7 +42,7 @@ p {
     padding: 0 5px;
     margin: 0;
     font-size: 28px;
-    background: #fff;
+    background: #fff ;
 }
 #play-icon {
     margin: 20px 2.5% 10px 2.5%;
@@ -180,4 +180,16 @@ input[type="range"]::-ms-thumb {
 input[type="range"]:active::-ms-thumb {
     transform: scale(1.2);
     background: #007db5;
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: -0.5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full viewport height */
+    background: #fff; /* Optional: just for better visibility */
 }
