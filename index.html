@@ -1,59 +1,326 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Custom Video Player</title>
-    <link rel="stylesheet" href="style.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- These 3 links are only for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  </head>
-  <body>
-    <div class="container show-controls">
-        <div class="wrapper">
-            <div class="video-timeline">
-                <div class="progress-area">
-                    <span>00:00</span>
-                    <div class="progress-bar"></div>
-                </div>
-            </div>
-            <ul class="video-controls">
-                <li class="options left">
-                    <button class="volume"><i class="fa-solid fa-volume-high"></i></button>
-                    <input type="range" min="0" max="1" step="any">
-                    <div class="video-timer">
-                        <p class="current-time">00:00</p>
-                        <p class="separator"> / </p>
-                        <p class="video-duration">00:00</p>
-                    </div>
-                </li>
-                <li class="options center">
-                    <button class="skip-backward"><i class="fas fa-backward"></i></button>
-                    <button class="play-pause"><i class="fas fa-play"></i></button>
-                    <button class="skip-forward"><i class="fas fa-forward"></i></button>
-                </li>
-                <li class="options right">
-                    <div class="playback-content">
-                        <button class="playback-speed"><span class="material-symbols-rounded">slow_motion_video</span></button>
-                        <ul class="speed-options">
-                            <li data-speed="2">2x</li>
-                            <li data-speed="1.5">1.5x</li>
-                            <li data-speed="1" class="active">Normal</li>
-                            <li data-speed="0.75">0.75x</li>
-                            <li data-speed="0.5">0.5x</li>
-                        </ul>
-                    </div>
-                    <button class="pic-in-pic"><span class="material-icons">picture_in_picture_alt</span></button>
-                    <button class="fullscreen"><i class="fa-solid fa-expand"></i></button>
-                </li>
-            </ul>
-        </div>
-        <video src="demo-video.mp4"></video>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>u</title>
+  <!-- Video.js CSS (dark theme) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/themes/forest/index.min.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #181818;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .video-container {
+      margin-top: 32px;
+      width: 100vw; /* Use full viewport width */
+      max-width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .video-js {
+      border-radius: 10px;
+      box-shadow: 0 0 16px #000a;
+      width: 100vw;
+      height: 400px;
+      background: #222;
+      max-width: 100vw;
+      min-width: 0;
+      margin: 0;
+    }
+    .controls-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 16px 0 0 0;
+      width: 100%;
+      align-items: center;
+    }
+    .nav-btn,
+    .playpause-btn {
+      background: #23264e;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      margin: 0 0.2em;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px #0004;
+      cursor: pointer;
+      transition: background 0.18s;
+      min-width: 48px;
+      min-height: 48px;
+      padding: 0;
+    }
+    .playpause-btn {
+      background: #3a7afe;
+      color: #fff;
+    }
+    .nav-btn:disabled,
+    .playpause-btn:disabled {
+      background: #32344e;
+      color: #888;
+      cursor: not-allowed;
+    }
+    .nav-btn svg,
+    .playpause-btn svg {
+      width: 26px;
+      height: 26px;
+      display: block;
+      fill: currentColor;
+      pointer-events: none;
+    }
+    .playlist-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
+      margin-top: 28px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px #0003;
+      background: #222;
+      border: 1px solid #222;
+    }
+    .playlist-row {
+      display: flex;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #292929;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      font-size: 1.07rem;
+    }
+    .playlist-row:last-child {
+      border-bottom: none;
+    }
+    .playlist-row.active, .playlist-row:hover {
+      background: #313a53;
+      color: #3a7afe;
+      font-weight: bold;
+    }
+    .playlist-title {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (max-width: 900px) {
+      .video-container {
+        width: 100vw;
+      }
+      .video-js {
+        height: 240px;
+      }
+      .controls-row {
+        gap: 1rem;
+      }
+      .nav-btn,
+      .playpause-btn {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        min-height: 38px;
+      }
+      .nav-btn svg,
+      .playpause-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    @media (max-width: 600px) {
+      .video-js {
+        height: 180px;
+        min-height: 140px;
+      }
+      .video-container {
+        margin-top: 10px;
+      }
+      .playlist-row {
+        padding: 11px 9px;
+        font-size: 1rem;
+      }
+      .playlist-title {
+        font-size: 1em;
+      }
+      .controls-row {
+        gap: 0.5rem;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2 style="font-size:2rem; margin-top: 20px;"></h2>
+  <div class="video-container">
+    <video
+      id="my-video"
+      class="video-js vjs-theme-forest"
+      controls
+      preload="auto"
+      poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+      data-setup='{}'
+    >
+      <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+      <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+      </p>
+    </video>
+    <div class="controls-row">
+      <button class="nav-btn" id="prev-btn" title="Previous" aria-label="Previous">
+        <!-- Prev SVG: Two leftwards arrows -->
+        <svg viewBox="0 0 24 24"><path d="M11.5 12l8.5 6V6l-8.5 6zM4 12l8.5 6V6L4 12z"/></svg>
+      </button>
+      <button class="playpause-btn" id="playpause-btn" title="Play/Pause" aria-label="Play/Pause">
+        <span id="playpause-icon">
+          <!-- Pause SVG default -->
+          <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </span>
+      </button>
+      <button class="nav-btn" id="next-btn" title="Next" aria-label="Next">
+        <!-- Next SVG: Two rightwards arrows -->
+        <svg viewBox="0 0 24 24"><path d="M12.5 12L4 6v12l8.5-6zm7.5 0L11.5 6v12l8.5-6z"/></svg>
+      </button>
     </div>
+    <div class="playlist-list" id="playlist-list">
+      <!-- Playlist rows will be injected here -->
+    </div>
+  </div>
+  <!-- Video.js JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
+  <script>
+    // Playlist data
+    const playlist = [
+      {
+        title: "Big Buck Bunny",
+        desc: "A short animated film by the Blender Institute.",
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        poster: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217"
+      },
+      {
+        title: "Elephant's Dream",
+        desc: "The first Blender Open Movie Project.",
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        poster: "https://upload.wikimedia.org/wikipedia/commons/9/90/Elephants_Dream_s1_proog.jpg"
+      },
+      {
+        title: "Sintel",
+        desc: "Another Blender Open Movie Project.",
+        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+        poster: "https://media.blender.org/uploads/sintel_poster.jpg"
+      }
+    ];
 
-    <script src="script.js"></script>
+    const player = videojs('my-video');
+    const playlistList = document.getElementById('playlist-list');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const playPauseBtn = document.getElementById('playpause-btn');
+    const playPauseIcon = document.getElementById('playpause-icon');
+    let currentIndex = 0;
 
-  </body>
+    // SVGs for play and pause
+    const pauseSVG = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    const playSVG = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+
+    function renderPlaylist() {
+      playlistList.innerHTML = '';
+      playlist.forEach((item, idx) => {
+        const row = document.createElement('div');
+        row.className = 'playlist-row' + (idx === currentIndex ? ' active' : '');
+        row.setAttribute('data-idx', idx);
+
+        row.innerHTML = `
+          <div class="playlist-title">${item.title}</div>
+        `;
+        row.addEventListener('click', () => {
+          if (currentIndex !== idx) {
+            loadVideo(idx);
+          }
+        });
+        playlistList.appendChild(row);
+      });
+    }
+
+    function loadVideo(idx) {
+      currentIndex = idx;
+      const video = playlist[idx];
+      player.src({ type: "video/mp4", src: video.src });
+      player.poster(video.poster);
+      player.play();
+      renderPlaylist();
+      updateNavButtons();
+      updatePlayPauseIcon();
+    }
+
+    function updateNavButtons() {
+      prevBtn.disabled = (currentIndex === 0);
+      nextBtn.disabled = (currentIndex === playlist.length - 1);
+    }
+
+    function updatePlayPauseIcon() {
+      if (!player.paused()) {
+        playPauseIcon.innerHTML = pauseSVG;
+        playPauseBtn.title = "Pause";
+        playPauseBtn.setAttribute("aria-label", "Pause");
+      } else {
+        playPauseIcon.innerHTML = playSVG;
+        playPauseBtn.title = "Play";
+        playPauseBtn.setAttribute("aria-label", "Play");
+      }
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        loadVideo(currentIndex - 1);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < playlist.length - 1) {
+        loadVideo(currentIndex + 1);
+      }
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      if (player.paused()) {
+        player.play();
+      } else {
+        player.pause();
+      }
+    });
+
+    // Sync play/pause icon with player state
+    player.on('play', updatePlayPauseIcon);
+    player.on('pause', updatePlayPauseIcon);
+
+    // Play next video automatically when current ends
+    player.on('ended', () => {
+      if (currentIndex < playlist.length - 1) {
+        loadVideo(currentIndex + 1);
+      }
+    });
+
+    // Initial render
+    renderPlaylist();
+    updateNavButtons();
+    updatePlayPauseIcon();
+  </script>
+</body>
 </html>
