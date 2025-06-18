@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>u</title>
-  <!-- Video.js CSS (dark theme) -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video-js.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/themes/forest/index.min.css" rel="stylesheet" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
       background: #181818;
@@ -177,7 +176,6 @@
       poster="pic.png"
       data-setup='{}'
     >
-      <source src="abc.mp4" type="video/mp4" />
       <p class="vjs-no-js">
         To view this video please enable JavaScript, and consider upgrading to a web browser that
         <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
@@ -185,74 +183,49 @@
     </video>
     <div class="controls-row">
       <button class="nav-btn" id="prev-btn" title="Previous" aria-label="Previous">
-        <!-- Prev SVG: Two leftwards arrows -->
         <svg viewBox="0 0 24 24"><path d="M11.5 12l8.5 6V6l-8.5 6zM4 12l8.5 6V6L4 12z"/></svg>
       </button>
       <button class="playpause-btn" id="playpause-btn" title="Play/Pause" aria-label="Play/Pause">
         <span id="playpause-icon">
-          <!-- Pause SVG default -->
           <svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
         </span>
       </button>
       <button class="nav-btn" id="next-btn" title="Next" aria-label="Next">
-        <!-- Next SVG: Two rightwards arrows -->
         <svg viewBox="0 0 24 24"><path d="M12.5 12L4 6v12l8.5-6zm7.5 0L11.5 6v12l8.5-6z"/></svg>
       </button>
     </div>
-    <div class="playlist-list" id="playlist-list">
-      <!-- Playlist rows will be injected here -->
-    </div>
+    <div class="playlist-list" id="playlist-list"></div>
   </div>
-  <!-- Video.js JS -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/8.10.0/video.min.js"></script>
   <script>
-    // Playlist data
     const playlist = [
-      
-      
-
-  {
+      {
         title: "Oru Katha",
-        desc: " ",
-        src: " https://files.catbox.moe/fyn2y5.mp4",
+        src: "https://files.catbox.moe/fyn2y5.mp4",
         poster: "pic.png"
       },
-      
-    
       {
         title: "Jutes - Red Velvet",
-        desc: "",
         src: "abc.mp4",
         poster: "pic.png"
       },
-
-        {
+      {
         title: "Tune Jo Na Kaha",
-        desc: "",
         src: "https://files.catbox.moe/vzuty4.mp4",
         poster: "pic.png"
       }
-      
-
-
-
-      
-
-
     ];
 
-    const player = videojs('my-video', {
-      responsive: true,
-      fluid: true
-    });
+    const player = videojs('my-video', { responsive: true, fluid: true });
     const playlistList = document.getElementById('playlist-list');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const playPauseBtn = document.getElementById('playpause-btn');
     const playPauseIcon = document.getElementById('playpause-icon');
     let currentIndex = 0;
+    let firstLoad = true;
 
-    // SVGs for play and pause
     const pauseSVG = `<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
     const playSVG = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
 
@@ -262,14 +235,9 @@
         const row = document.createElement('div');
         row.className = 'playlist-row' + (idx === currentIndex ? ' active' : '');
         row.setAttribute('data-idx', idx);
-
-        row.innerHTML = `
-          <div class="playlist-title">${item.title}</div>
-        `;
+        row.innerHTML = `<div class="playlist-title">${item.title}</div>`;
         row.addEventListener('click', () => {
-          if (currentIndex !== idx) {
-            loadVideo(idx);
-          }
+          if (currentIndex !== idx) loadVideo(idx);
         });
         playlistList.appendChild(row);
       });
@@ -280,15 +248,18 @@
       const video = playlist[idx];
       player.src({ type: "video/mp4", src: video.src });
       player.poster(video.poster);
-      player.play();
       renderPlaylist();
       updateNavButtons();
       updatePlayPauseIcon();
+
+      if (!firstLoad) {
+        player.play();
+      }
     }
 
     function updateNavButtons() {
-      prevBtn.disabled = (currentIndex === 0);
-      nextBtn.disabled = (currentIndex === playlist.length - 1);
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === playlist.length - 1;
     }
 
     function updatePlayPauseIcon() {
@@ -304,15 +275,11 @@
     }
 
     prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        loadVideo(currentIndex - 1);
-      }
+      if (currentIndex > 0) loadVideo(currentIndex - 1);
     });
 
     nextBtn.addEventListener('click', () => {
-      if (currentIndex < playlist.length - 1) {
-        loadVideo(currentIndex + 1);
-      }
+      if (currentIndex < playlist.length - 1) loadVideo(currentIndex + 1);
     });
 
     playPauseBtn.addEventListener('click', () => {
@@ -323,21 +290,20 @@
       }
     });
 
-    // Sync play/pause icon with player state
     player.on('play', updatePlayPauseIcon);
     player.on('pause', updatePlayPauseIcon);
 
-    // Play next video automatically when current ends
     player.on('ended', () => {
       if (currentIndex < playlist.length - 1) {
         loadVideo(currentIndex + 1);
       }
     });
 
-    // Initial render
     renderPlaylist();
     updateNavButtons();
     updatePlayPauseIcon();
+    loadVideo(0); // Load first video but do not autoplay
+    firstLoad = false;
   </script>
 </body>
 </html>
